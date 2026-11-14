@@ -1,10 +1,31 @@
-# Project FORGE
+# Project FORGE — Engineering Project Management
 
-A cloud-based **Engineering Project Management** SaaS platform — centralising engineering
-projects, milestones, design reviews, clarification requests and technical evidence into a
-single workspace.
+FORGE tracks engineering projects, milestones, design reviews, clarification requests and technical evidence. Angular calls a modular Express API. Prisma handles persistence and migrations. The authentication service hashes passwords and stored refresh tokens. API authorization checks protect project workflows.
 
----
+## Engineering scope
+
+Compose serves the frontend on port 4200. Nginx forwards `/api/` to the internal API on port 4000. Local development also supports a separate frontend and API. The backend test configuration targets a scratch PostgreSQL database.
+
+## Getting started
+
+Copy `.env.example` to `.env`, set the database password and independent JWT secrets, and configure `CLIENT_URL` for the local frontend. From the root run `docker compose up --build`. Open `http://localhost:4200` and check `/api/v1/health` on that origin. The API entrypoint applies migrations. Use a dedicated development database for the optional seed workflow.
+
+## Status and verification
+
+Implemented application with integration tests. Deployment unverified.
+
+Compose configuration parsed successfully. Four backend Vitest files cover authentication, permissions, clarifications and evidence. Integration tests require a scratch database and were not executed. Production deployment remains unverified.
+
+## Source and evidence
+
+- [auth.service.ts](backend/src/modules/auth/auth.service.ts)
+- [permissions.test.ts](backend/tests/permissions.test.ts)
+- [schema.prisma](backend/prisma/schema.prisma)
+- [docker-compose.yml](docker-compose.yml)
+- [nginx.conf.template](docker/nginx.conf.template)
+- [EVIDENCE_STORAGE.md](EVIDENCE_STORAGE.md)
+
+## Developer reference
 
 ## Tech stack
 
@@ -36,8 +57,8 @@ docker compose up --build
 | Service | URL |
 |---|---|
 | Web | http://localhost:4200 |
-| API | http://localhost:4000/api/v1 |
-| Health | http://localhost:4000/api/v1/health |
+| API | http://localhost:4200/api/v1 |
+| Health | http://localhost:4200/api/v1/health |
 | PostgreSQL | localhost:5432 |
 
 ## Local development without Docker
@@ -50,6 +71,7 @@ Requires Node 20 and a running PostgreSQL instance.
 cd backend
 cp .env.example .env        # set DATABASE_URL and both JWT secrets
 npm install
+export DEMO_PASSWORD="$(openssl rand -hex 24)"
 npm run setup               # prisma generate + migrate + seed demo data
 npm run dev                 # API on http://localhost:4000
 ```
@@ -76,7 +98,7 @@ before running it; `docker compose up db` provides one. The tests create their o
 workspaces and never read the seeded data, and uploads are written to a temporary
 directory rather than to the storage volume.
 
-Five files, covering authentication, roles and permissions, workspace isolation, the
+Four test files, covering authentication, roles and permissions, workspace isolation, the
 clarification state machine, and evidence upload and access control.
 
 ### Demo accounts
@@ -274,3 +296,7 @@ hardcoded to a deployed hostname.
 - Migrations run automatically on container start via `prisma migrate deploy`.
 - Google Fonts inlining is disabled at build time so the image can build without
   outbound network access; the browser still loads the font from the `<link>` tag.
+
+## Author
+
+Ahmed Mohamed Elsayed Elreefy. Engineering work includes requirements, technical decisions, AI-assisted implementation, debugging and acceptance review.
