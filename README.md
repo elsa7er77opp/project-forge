@@ -63,14 +63,14 @@ docker compose up --build
 
 ## Local development without Docker
 
-Requires Node 20 and a running PostgreSQL instance.
+Use Node 20.19+ within the 20.x series, Node 22.12+ within 22.x, or Node 24, plus PostgreSQL. The Angular CLI lockfile sets this Node requirement.
 
 ### 1. Backend
 
 ```bash
 cd backend
 cp .env.example .env        # set DATABASE_URL and both JWT secrets
-npm install
+npm ci
 export DEMO_PASSWORD="$(openssl rand -hex 24)"
 npm run setup               # prisma generate + migrate + seed demo data
 npm run dev                 # API on http://localhost:4000
@@ -80,7 +80,7 @@ npm run dev                 # API on http://localhost:4000
 
 ```bash
 cd frontend
-npm install
+npm ci
 npm start                   # app on http://localhost:4200
 ```
 
